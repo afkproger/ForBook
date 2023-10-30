@@ -1,9 +1,17 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Tree<T extends Comparable<T>>{
+    /*Хранит данные о сортировке, где ключ - коли-во отсортированных элементов,
+     а значение это время сортировки */
+    private  Map<Integer , Long> toSaveDataAboutSorting = new HashMap<>();
+    private  long startTimer = 0;
+    private  int countOfSortedElements = 0; // количество отсортированных элементов в текущем листе
+
+    public  Map<Integer, Long> getToSaveDataAboutSorting() {
+        return toSaveDataAboutSorting;
+    }
+
     private Node<T> root; // ссылка на корневой элемент дерева
-    private int counter;
 
     /* метод для создания дерева с помощью
     коллекции имплементирующей интерфейс*/
@@ -18,12 +26,10 @@ public class Tree<T extends Comparable<T>>{
     public void addElementToTree(T data){
         if (root == null){
             root = new Node<>(data);
-            counter = 1;
             return;
         }
         // рекурсивный выход
         root.addNewNode(data);
-        counter++;
     }
 
     /*Инфиксный обход дерева*/
@@ -31,7 +37,9 @@ public class Tree<T extends Comparable<T>>{
         if (root == null){
             return new ArrayList<>();
         }
+        startTimer = System.currentTimeMillis();
         return inorder(root);
+
     }
 
     /*Инфиксный обход - реализация*/
@@ -45,7 +53,7 @@ public class Tree<T extends Comparable<T>>{
             }
 
             list.add(node.getData());
-
+            countOfSortedElements++;
             if(node.getRight() != null){
                 list.addAll(inorder(node.getRight()));
             }
@@ -54,4 +62,37 @@ public class Tree<T extends Comparable<T>>{
         return list;
 
     }
+
+    public List<T> toSorTree (){
+        // Сброс данных перед новым обходом
+        countOfSortedElements = 0;
+        toSaveDataAboutSorting.clear();
+        startTimer = System.nanoTime();  // Запуск таймера
+        return inorderWithOutRecursion();
+    }
+
+    private List<T> inorderWithOutRecursion(){
+        List<T> list = new ArrayList<>();
+        Stack<Node<T>> stack = new Stack<>();
+        Node<T> current = root;
+
+        while (current != null || !stack.isEmpty()) {
+            while (current != null) {
+                stack.push(current);
+                current = current.getLeft();
+            }
+            current = stack.pop();
+            // Замер времени при добавлении элемента
+            list.add(current.getData());
+            countOfSortedElements++;
+            long endTime = System.nanoTime();
+            long sortingTime = endTime - startTimer;
+            toSaveDataAboutSorting.put(countOfSortedElements, sortingTime);
+
+            current = current.getRight();
+        }
+
+        return list;
+    }
+
 }

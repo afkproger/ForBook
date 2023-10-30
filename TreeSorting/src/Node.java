@@ -1,4 +1,20 @@
+import java.util.Objects;
+
 public class Node <T extends Comparable<T>>{
+    public Node (){} // конструктор по умолчанию
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Node<?> node = (Node<?>) o;
+        return Objects.equals(data, node.data);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(data);
+    }
+
     private final int ZEROFORCOMPAREVALUES = 0; // ноль для сравнений в компараторе
     private T data; // данные в узле
     private Node<T> left; // левый потомок

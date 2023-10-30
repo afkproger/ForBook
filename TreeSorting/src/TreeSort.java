@@ -9,6 +9,11 @@ public class TreeSort <T extends Comparable<T>>  {
         tree = tree.toCreateTreeFromList(inputList);
         return tree.inorder();
     }
+    public Map<Integer,Long> createDataAboutSorting(List<T> inputList){
+        Tree<T> tree = new Tree<>();
+        tree = tree.toCreateTreeFromList(inputList);
+        tree.toMakeInorder();
+        return tree.getToSaveDataAboutSorting();
+    }
 
-    //TODO:Метод для построения графика где f(x) = кол-во отсортированных элементов ,а x = время затраченное на сортировку*/
 }
